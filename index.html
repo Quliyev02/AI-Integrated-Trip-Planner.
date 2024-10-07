@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://play-lh.googleusercontent.com/8UvKLy1V4HuViP3F44nc0SzKgI6ZZieKD4RM1hVKOKCJi6d7BiD9Q3apFVdv3Dp9t4s=w240-h480-rw">
+    <link rel="stylesheet" href="./assets/style.css">
+    <title>AI Trip Planner with Gemini</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script type="importmap">
+    {
+        "imports": {
+            "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+    }
+    </script>
+    <script src="https://esm.run/@google/generative-ai" type="module" defer></script>
+    <script src="./assets/app.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Trip Planner With Google Generative AI</h1>
+        <input type="text" id="from" placeholder="Starting point" />
+        <input type="text" id="to" placeholder="Destination" />
+        <input type="text" id="days" placeholder="Number of days" />
+        <button id="generateBtn">Generate</button>
+        <h3>Generated Content</h3>
+        <div id="output"></div>
+    </div>
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        // Fetch your API_KEY
+        const API_KEY = "AIzaSyCHVVJjh3YEyXi7VlfUSYcywoakOAXXN-Y";
+
+        // Access your API key (see "Set up your API key" above)
+        const genAI = new GoogleGenerativeAI(API_KEY);
+
+        async function run() {
+            console.log('Calling');
+            const fromDest = document.getElementById("from").value;
+            const toDest = document.getElementById("to").value;
+            const days = document.getElementById("days").value;
+
+            // For text-only input, use the gemini-pro model
+            const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro-latest" });
+            const prompt = `Create a travel itinerary from ${fromDest} to ${toDest} for ${days} days.`;
+
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            const text = response.text();
+            var converter = new showdown.Converter();
+
+            document.getElementById("output").innerHTML = converter.makeHtml(text);
+        }
+
+        document.getElementById("generateBtn").addEventListener("click", run);
+    </script>
+</body>
+</html>
